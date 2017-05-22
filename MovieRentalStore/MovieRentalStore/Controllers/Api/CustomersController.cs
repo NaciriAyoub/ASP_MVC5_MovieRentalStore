@@ -45,6 +45,7 @@ namespace MovieRentalStore.Controllers.API
 
         //POST /api/customers
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult CreateCustomer(CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
@@ -61,6 +62,7 @@ namespace MovieRentalStore.Controllers.API
         
         //PUT /api/customers/{id}
         [HttpPut]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
@@ -79,6 +81,7 @@ namespace MovieRentalStore.Controllers.API
         
         //PUT /api/customers/{id}
         [HttpDelete]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult DeleteCustomer(int id)
         {
             if (!ModelState.IsValid)

@@ -29,7 +29,10 @@ namespace MovieRentalStore.Controllers
         {
             //var movies = _context.Movies.Include(m => m.Genre).ToList();
             //return View(movies);
-            return View();
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List");
+
+            return View("ReadOnlyList");
         }
 
 
@@ -48,6 +51,8 @@ namespace MovieRentalStore.Controllers
 
         }
 
+
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult New()
         {
             var movieViewModel = new MovieViewModel()
@@ -58,8 +63,11 @@ namespace MovieRentalStore.Controllers
             return View("MovieForm", movieViewModel);
         }
 
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Save(Movie movie)
         {
 
@@ -67,7 +75,7 @@ namespace MovieRentalStore.Controllers
             {
                 var movieViewModel = new MovieViewModel()
                 {
-                    Genres = _context.Genres.ToList() ,
+                    Genres = _context.Genres.ToList(),
                     Movie = movie
                 };
                 return View("MovieForm", movieViewModel);
@@ -76,7 +84,7 @@ namespace MovieRentalStore.Controllers
 
             if (movie.Id == 0)
             {
-                movie.AddedDate=DateTime.Now;
+                movie.AddedDate = DateTime.Now;
                 _context.Movies.Add(movie);
             }
             else
@@ -94,6 +102,8 @@ namespace MovieRentalStore.Controllers
             return RedirectToAction("Index", "Movies");
         }
 
+
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Edit(int id)
         {
             var movie = _context.Movies.SingleOrDefault(x => x.Id == id);

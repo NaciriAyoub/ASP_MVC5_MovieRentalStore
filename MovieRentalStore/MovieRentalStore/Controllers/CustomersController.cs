@@ -28,7 +28,10 @@ namespace MovieRentalStore.Controllers
         {
             //var customers = _context.Customers.Include(c => c.MembershipType).ToList();
             //return View(customers);
-            return View();
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List");
+
+            return View("ReadOnlyList");
         }
 
 
@@ -47,6 +50,8 @@ namespace MovieRentalStore.Controllers
 
         }
 
+
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult New()
         {
             var membershipTypes = _context.MembershipTypes.ToList();
@@ -61,6 +66,7 @@ namespace MovieRentalStore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Save(Customer customer)
         {
             if (!ModelState.IsValid)
@@ -92,6 +98,8 @@ namespace MovieRentalStore.Controllers
             return RedirectToAction("Index", "Customers");
         }
 
+
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Edit(int id)
         {
             var customer = _context.Customers.SingleOrDefault(x => x.Id == id);
