@@ -84,6 +84,7 @@ namespace MovieRentalStore.Controllers
 
             if (movie.Id == 0)
             {
+                movie.NumberAvailable = movie.NumberInStock;
                 movie.AddedDate = DateTime.Now;
                 _context.Movies.Add(movie);
             }

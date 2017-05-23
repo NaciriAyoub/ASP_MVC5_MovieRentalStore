@@ -21,12 +21,19 @@ namespace MovieRentalStore.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        public IHttpActionResult GetMovies()
+        public IHttpActionResult GetMovies(string query = null)
         {
-            return Ok(_context.Movies
+            var moviesQuery = _context.Movies
                 .Include(m=>m.Genre)
-                .ToList()
-                .Select(Mapper.Map<Movie, MovieDto>));
+                .Where(m => m.NumberAvailable > 0);
+
+            if (!String.IsNullOrEmpty(query))
+                moviesQuery = moviesQuery.Where(m=>m.Name.Contains(query));
+
+               return Ok(moviesQuery
+                        .ToList()
+                        .Select(Mapper.Map<Movie, MovieDto>));
+           
         }
 
         public IHttpActionResult GetMovie(int id)
@@ -47,6 +54,7 @@ namespace MovieRentalStore.Controllers.Api
                 return BadRequest();
 
             var movie = Mapper.Map<MovieDto, Movie>(movieDto);
+            movie.NumberAvailable = movieDto.NumberInStock;
             _context.Movies.Add(movie);
             _context.SaveChanges();
 
